@@ -18,7 +18,6 @@ export const socketMiddleware = socket => store => next => action =>{
 	//捕获是否需要服务器处理，如果需要则传递到服务器
 	if(action.meta && action.meta.remote){
 		socket.emit("action",action)
-    return
 	}
 
 	return next(action)

@@ -1,3 +1,4 @@
+import { toJS } from "immutable"
 const DEFAULT_ROOM = "0"
 
 export default function listenWebSocket( io, store ){
@@ -12,13 +13,13 @@ export default function listenWebSocket( io, store ){
 			console.log("client action:", action )
 			switch( action.type ){
 				case "SWITCH_ROOM":
-					return switchRoom( socket, action.roomId || DEFAULT_ROOM )
+					return switchRoom( socket, store, action.roomId || DEFAULT_ROOM )
 				
 				// send this message back
 				case "NEW_MESSAGE":
-					if( socket.rooms && socket.rooms.length>0  ){
-						socket.rooms.forEach(id=>{
-							socket.to( id ).emit("message", action.message)	
+					if( socket.rooms  ){
+						store.getState().get('rooms').map(room=>{
+							socket.to( room.get('id') ).emit("message", action.message)	
 						})
 					}else{
 						socket.emit( "message", action.message )
@@ -41,16 +42,15 @@ export default function listenWebSocket( io, store ){
 	})
 }
 
-function switchRoom(socket,roomId){
-	socket.rooms.forEach( (room,index)=>{
-		console.log("should leave room, skip first one")
+function switchRoom(socket,store,roomId){
+
+	store.getState().get('rooms').map( (room,index)=>{
 		if( index > 0 ){
-			socket.leave( room )
+			socket.leave( room )	
 		}
 	})
 
 	setTimeout(()=>{
 		socket.join( roomId )
-		console.log( "roomId:",roomId, "socket.rooms:",socket.rooms )
 	},200)
 }
