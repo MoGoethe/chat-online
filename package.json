@@ -7,7 +7,9 @@
     "testServer": "mocha --compilers js:babel-core/register --require ./test/serverTestHelper.js ./test/server/ --recursive",
     "testServer:watch": "npm run testServer -- --watch",
     "testClient": "mocha --compilers js:babel-core/register --require ./test/clientTestHelper.js ./test/client/ --recursive",
-    "testClient:watch": "npm run testClient -- --watch"
+    "testClient:watch": "npm run testClient -- --watch",
+    "startClient":"webpack & webpack-dev-server",
+    "startServer":" babel-node --presets es2015 server.js"
   },
   "babel": {
     "presets": [
